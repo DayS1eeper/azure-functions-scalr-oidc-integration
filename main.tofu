@@ -89,7 +89,7 @@ data "archive_file" "app_package" {
 
 resource "azuread_application" "scalr_federation" {
   display_name = "${var.prefix}-federation"
-  
+
   identifier_uris = [
     local.scalr_audience
   ]
@@ -120,14 +120,14 @@ resource "azurerm_linux_function_app" "func" {
   }
 
   app_settings = {
-    "SCALR_HOSTNAME"                 = var.scalr_hostname
-    "SCALR_AUDIENCE"                 = local.scalr_audience
-    "SCALR_SERVICE_ACCOUNT_EMAIL"    = scalr_service_account.sa.email
-    "AZURE_CLIENT_ID"                = azurerm_user_assigned_identity.func_id.client_id
+    "SCALR_HOSTNAME"                           = var.scalr_hostname
+    "SCALR_AUDIENCE"                           = local.scalr_audience
+    "SCALR_SERVICE_ACCOUNT_EMAIL"              = scalr_service_account.sa.email
+    "AZURE_CLIENT_ID"                          = azurerm_user_assigned_identity.func_id.client_id
     "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING" = azurerm_storage_account.sa.primary_connection_string
     "WEBSITE_CONTENTSHARE"                     = "${var.prefix}-content-share"
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
-    "ENABLE_ORYX_BUILD"              = "true"
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"           = "true"
+    "ENABLE_ORYX_BUILD"                        = "true"
   }
 }
 
@@ -145,7 +145,7 @@ resource "null_resource" "function_deployment" {
         --build-remote true
     EOT
   }
-  
+
   depends_on = [azurerm_linux_function_app.func]
 }
 
@@ -155,7 +155,7 @@ resource "null_resource" "function_deployment" {
 
 resource "scalr_workload_identity_provider" "azure_oidc" {
   name = "azure-entra-${local.tenant_id}"
-  url = "https://sts.windows.net/${local.tenant_id}"
+  url  = "https://sts.windows.net/${local.tenant_id}"
 
   allowed_audiences = [local.scalr_audience]
 }
